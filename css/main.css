@@ -1,4 +1,10 @@
 .currency-tag {
     display: inline;
-    background: #008800;
+    background: -webkit-linear-gradient(rgba(0,128,0,0.8), rgba(0,255,0,0.8));
+    background: -o-linear-gradient(rgba(0,128,0,0.8), rgba(0,255,0,0.8));
+    background: -moz-linear-gradient(rgba(0,128,0,0.8), rgba(0,255,0,0.8));
+    background: linear-gradient(rgba(0,128,0,0.8), rgba(0,255,0,0.8));
+    border-radius: 3px;
+    border: 1px solid #004400;
+    padding: 2px 0px;
 }
