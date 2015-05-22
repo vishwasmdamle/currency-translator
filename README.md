@@ -1,0 +1,3 @@
+#Currency Translator
+####A Google Chrome extension to for displaying all currency conversions on web pages
+When you don't earn/spend in dollars and you are too lazy to open calculator...
