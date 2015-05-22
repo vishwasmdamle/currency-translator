@@ -6,14 +6,14 @@ var Translator = function() {
     var self = this;
     this.figureExp;
     this.currencySymbols = "";
-    this.conversionRates;
     this.init = function() {
         chrome.runtime.sendMessage(
             {query: "CurrencyRate"},
             function(response) {
                 self.currencyData = response;
                 $.each(self.currencyData.currencyMetadata, function(key, value) {
-                    self.currencySymbols += '\\' + value.currencySymbol + '|';
+                    if(value.id != self.currencyData.hostCurrency)
+                        self.currencySymbols += '\\' + value.currencySymbol + '|';
                 });
                 self.currencySymbols = self.currencySymbols.replace(/\|$/, '');
                 self.figureExp = new RegExp('((' + self.currencySymbols + ')[0-9\\., ]*[0-9])(?!([^<]+)?>)', 'gi');
@@ -32,16 +32,57 @@ var Translator = function() {
     var bindHover = function(currencyData) {
         $(".currency-tag").hover(
             function() {
-                var symbol = this.innerText.match(self.currencySymbols);
-                var currency;
-                $.each(currencyData.currencyMetadata, function(key, value) {
-                    if(value.currencySymbol == symbol) {currency = value;}
-                });
-                $(this).append($("<span>" + " * " + currencyData.conversionRates[currencyData.hostCurrency][currency.id] + "</span>"));
+                displayPopup(currencyData, this)
             },
             function() {
-                $(this).find("span:last").remove();
+                $('#conversion-popup').hide();
             }
         );
     }
+
+    var displayPopup = function(currencyData, currencyTag) {
+        var symbol = currencyTag.innerText.match(self.currencySymbols);
+        var currency;
+        $.each(currencyData.currencyMetadata, function(key, value) {
+            if(value.currencySymbol == symbol) {currency = value;}
+        });
+
+        var popupElement;
+        if($('#conversion-popup').length != 0) {
+            popupElement = $('#conversion-popup');
+            $('#conversion-popup').show();
+        } else {
+            popupElement = $("<div id='conversion-popup'></div>");
+        }
+
+        buildPopup(currencyData, currency, popupElement, currencyTag);
+
+    }
+
+    var buildPopup = function(currencyData, currency, element, currencyTag) {
+        var primaryConversionRate = currencyData.currencyMetadata[currency.id].conversion;
+        var amount = parseFloat(currencyTag.innerText.replace(/[^.0-9]/g, ""));
+
+        var tr, td, p;
+        var div = document.createElement('div');
+        p = document.createElement('p');
+        p.innerHTML = currencyData.currencyMetadata[currencyData.hostCurrency].currencySymbol
+            + ' ' + (amount * primaryConversionRate).toFixed(2);
+        div.appendChild(p);
+
+        div.appendChild(document.createElement('hr'));
+
+        for(var index in currencyData.currencyMetadata) {
+            if(currencyData.currencyMetadata[index].id != currencyData.hostCurrency) {
+                p = document.createElement('p');
+                p.innerHTML = currencyData.currencyMetadata[index].currencySymbol
+                    + ' ' + (amount * primaryConversionRate / currencyData.currencyMetadata[index].conversion).toFixed(2);
+                div.appendChild(p);
+            }
+        }
+
+        element.empty();
+        element.append(div);
+        $(document.body).append(element);
+    };
 }

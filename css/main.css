@@ -8,3 +8,19 @@
     border: 1px solid #004400;
     padding: 2px 0px;
 }
+
+#conversion-popup {
+    border-radius: 10px 10px 10px 10px;
+    box-shadow: 6px 6px 10px #888888;
+    background: #FFFFFF;
+    position: fixed;
+    padding: 10px;
+    border: 1px solid #888888;
+    left: 1%;
+    top: 1%;
+    width: 150px;
+}
+
+#conversion-popup div {
+    text-align: right;
+}

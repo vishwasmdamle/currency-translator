@@ -11,12 +11,6 @@ var CurrencyProvider = function() {
         }
     };
 
-    this.conversionRates = {
-        INR: {
-            USD: 60
-        }
-    }
-
     this.refreshRates = function() {
         console.log("fetching rates from http://www.freecurrencyconverterapi.com...");
         var requestUrl = "http://www.freecurrencyconverterapi.com/api/v3/convert?q=";
@@ -33,9 +27,10 @@ var CurrencyProvider = function() {
                     var key = currencyList[index] + "_" + self.hostCurrency;
                     var srcCurrency = currencyList[index];
                     if(results[key]) {
-                        self.conversionRates[self.hostCurrency][srcCurrency] = results[key].val;
+                        self.currencyMetadata[srcCurrency].conversion = results[key].val;
                     }
                 }
+                self.currencyMetadata[self.hostCurrency].conversion = 1;
             }
         });
     }
@@ -54,14 +49,15 @@ var CurrencyProvider = function() {
                         self.currencyMetadata[key] = results[key];
                     }
                 }
+                self.currencyMetadata[self.hostCurrency] = results[self.hostCurrency];
+                self.refreshRates();
             }
         });
     }
 
     this.startRefreshService = function() {
         self.updateCurrencyInfo();
-        self.refreshRates();
-        self.serviceId = setInterval(self.refreshRates, 900000);
+        self.serviceId = setInterval(self.updateCurrencyInfo, 900000);
     }
 }
 
@@ -73,7 +69,6 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.query == "CurrencyRate") {
             sendResponse({
-                conversionRates: currencyProvider.conversionRates,
                 currencyMetadata: currencyProvider.currencyMetadata,
                 hostCurrency: currencyProvider.hostCurrency
             });
