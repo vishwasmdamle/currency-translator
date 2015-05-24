@@ -13,6 +13,14 @@ var CurrencyProvider = function() {
         }
     };
 
+    this.init = function() {
+        chrome.storage.sync.get(function(dataObject) {
+            self.hostCurrency = dataObject.data.hostCurrency;
+            self.currencyList = dataObject.data.selectedCurrencies;
+            self.updateCurrencyInfo();
+        });
+    }
+
     this.refreshRates = function() {
         console.log("fetching rates from http://www.freecurrencyconverterapi.com...");
         var requestUrl = "http://www.freecurrencyconverterapi.com/api/v3/convert?q=";
@@ -58,10 +66,20 @@ var CurrencyProvider = function() {
         });
     }
 
+    this.makePersistent = function() {
+        chrome.storage.sync.set({
+            data: {
+                hostCurrency: self.hostCurrency,
+                selectedCurrencies: self.currencyList
+            }
+        });
+    }
+
     this.startRefreshService = function() {
         self.updateCurrencyInfo();
         self.serviceId = setInterval(self.updateCurrencyInfo, 900000);
     }
+    this.init();
 }
 
 var currencyProvider = new CurrencyProvider();
@@ -86,6 +104,7 @@ chrome.runtime.onMessage.addListener(
         if (request.query == "DataUpdate") {
             currencyProvider.currencyList = request.data.selectedCurrencies;
             currencyProvider.hostCurrency = request.data.hostCurrency;
+            currencyProvider.makePersistent();
             currencyProvider.updateCurrencyInfo();
         }
 });

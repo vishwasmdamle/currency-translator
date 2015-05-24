@@ -9,6 +9,7 @@
 
   "permissions": [
     "activeTab",
+    "storage",
     "http://www.freecurrencyconverterapi.com/api/v3/*",
     "*://*/*"
   ],
