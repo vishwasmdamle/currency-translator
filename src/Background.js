@@ -15,6 +15,8 @@ var CurrencyProvider = function() {
 
     this.init = function() {
         chrome.storage.sync.get(function(dataObject) {
+            if(!dataObject.data)
+                return;
             self.hostCurrency = dataObject.data.hostCurrency;
             self.selectedCurrencies = dataObject.data.selectedCurrencies;
             self.updateCurrencyInfo();
