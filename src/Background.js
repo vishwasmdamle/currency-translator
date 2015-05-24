@@ -1,5 +1,5 @@
 var CurrencyProvider = function() {
-    this.allCurrencies = ["EUR", "GBP", "HKD", "INR", "JPY", "USD"];
+    this.allCurrencies = ["EUR", "GBP", "INR", "JPY", "USD"];
 
     var self = this;
     this.serviceId = 0;
@@ -45,6 +45,7 @@ var CurrencyProvider = function() {
             url: requestUrl,
             success: function(jsonResult) {
                 var results = jsonResult.results;
+                self.currencyMetadata = {};
                 for(var index in self.currencyList) {
                     var key = self.currencyList[index];
                     if(results[key]) {
@@ -81,5 +82,10 @@ chrome.runtime.onMessage.addListener(
                 selectedCurrencies: currencyProvider.currencyList,
                 hostCurrency: currencyProvider.hostCurrency
             });
+        }
+        if (request.query == "DataUpdate") {
+            currencyProvider.currencyList = request.data.selectedCurrencies;
+            currencyProvider.hostCurrency = request.data.hostCurrency;
+            currencyProvider.updateCurrencyInfo();
         }
 });
