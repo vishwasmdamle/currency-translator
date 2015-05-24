@@ -1,8 +1,10 @@
 var CurrencyProvider = function() {
+    this.allCurrencies = ["EUR", "GBP", "HKD", "INR", "JPY", "USD"];
+
     var self = this;
     this.serviceId = 0;
     this.hostCurrency = "INR";
-    var currencyList = ["USD", "GBP", "EUR", "JPY"];
+    this.currencyList = ["EUR", "GBP", "INR", "JPY", "USD"];
     this.currencyMetadata = {
     USD: {
         currencyName: "United States dollar",
@@ -14,8 +16,8 @@ var CurrencyProvider = function() {
     this.refreshRates = function() {
         console.log("fetching rates from http://www.freecurrencyconverterapi.com...");
         var requestUrl = "http://www.freecurrencyconverterapi.com/api/v3/convert?q=";
-        for(var index in currencyList) {
-            requestUrl = requestUrl + currencyList[index] + "_" + self.hostCurrency + ",";
+        for(var index in self.currencyList) {
+            requestUrl = requestUrl + self.currencyList[index] + "_" + self.hostCurrency + ",";
         }
         requestUrl = requestUrl.replace(/,$/, "");
 
@@ -23,9 +25,9 @@ var CurrencyProvider = function() {
             url: requestUrl,
             success: function(jsonResult) {
                 var results = jsonResult.results;
-                for(var index in currencyList) {
-                    var key = currencyList[index] + "_" + self.hostCurrency;
-                    var srcCurrency = currencyList[index];
+                for(var index in self.currencyList) {
+                    var key = self.currencyList[index] + "_" + self.hostCurrency;
+                    var srcCurrency = self.currencyList[index];
                     if(results[key]) {
                         self.currencyMetadata[srcCurrency].conversion = results[key].val;
                     }
@@ -43,8 +45,8 @@ var CurrencyProvider = function() {
             url: requestUrl,
             success: function(jsonResult) {
                 var results = jsonResult.results;
-                for(var index in currencyList) {
-                    var key = currencyList[index];
+                for(var index in self.currencyList) {
+                    var key = self.currencyList[index];
                     if(results[key]) {
                         self.currencyMetadata[key] = results[key];
                     }
@@ -70,6 +72,13 @@ chrome.runtime.onMessage.addListener(
         if (request.query == "CurrencyRate") {
             sendResponse({
                 currencyMetadata: currencyProvider.currencyMetadata,
+                hostCurrency: currencyProvider.hostCurrency
+            });
+        }
+        if (request.query == "CurrencyList") {
+            sendResponse({
+                allCurrencies: currencyProvider.allCurrencies,
+                selectedCurrencies: currencyProvider.currencyList,
                 hostCurrency: currencyProvider.hostCurrency
             });
         }
