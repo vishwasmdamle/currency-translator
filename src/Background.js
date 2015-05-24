@@ -4,7 +4,7 @@ var CurrencyProvider = function() {
     var self = this;
     this.serviceId = 0;
     this.hostCurrency = "INR";
-    this.currencyList = ["EUR", "GBP", "INR", "JPY", "USD"];
+    this.selectedCurrencies = ["EUR", "GBP", "INR", "JPY", "USD"];
     this.currencyMetadata = {
     USD: {
         currencyName: "United States dollar",
@@ -16,7 +16,7 @@ var CurrencyProvider = function() {
     this.init = function() {
         chrome.storage.sync.get(function(dataObject) {
             self.hostCurrency = dataObject.data.hostCurrency;
-            self.currencyList = dataObject.data.selectedCurrencies;
+            self.selectedCurrencies = dataObject.data.selectedCurrencies;
             self.updateCurrencyInfo();
         });
     }
@@ -24,8 +24,8 @@ var CurrencyProvider = function() {
     this.refreshRates = function() {
         console.log("fetching rates from http://www.freecurrencyconverterapi.com...");
         var requestUrl = "http://www.freecurrencyconverterapi.com/api/v3/convert?q=";
-        for(var index in self.currencyList) {
-            requestUrl = requestUrl + self.currencyList[index] + "_" + self.hostCurrency + ",";
+        for(var index in self.selectedCurrencies) {
+            requestUrl = requestUrl + self.selectedCurrencies[index] + "_" + self.hostCurrency + ",";
         }
         requestUrl = requestUrl.replace(/,$/, "");
 
@@ -33,9 +33,9 @@ var CurrencyProvider = function() {
             url: requestUrl,
             success: function(jsonResult) {
                 var results = jsonResult.results;
-                for(var index in self.currencyList) {
-                    var key = self.currencyList[index] + "_" + self.hostCurrency;
-                    var srcCurrency = self.currencyList[index];
+                for(var index in self.selectedCurrencies) {
+                    var key = self.selectedCurrencies[index] + "_" + self.hostCurrency;
+                    var srcCurrency = self.selectedCurrencies[index];
                     if(results[key]) {
                         self.currencyMetadata[srcCurrency].conversion = results[key].val;
                     }
@@ -54,8 +54,8 @@ var CurrencyProvider = function() {
             success: function(jsonResult) {
                 var results = jsonResult.results;
                 self.currencyMetadata = {};
-                for(var index in self.currencyList) {
-                    var key = self.currencyList[index];
+                for(var index in self.selectedCurrencies) {
+                    var key = self.selectedCurrencies[index];
                     if(results[key]) {
                         self.currencyMetadata[key] = results[key];
                     }
@@ -70,7 +70,7 @@ var CurrencyProvider = function() {
         chrome.storage.sync.set({
             data: {
                 hostCurrency: self.hostCurrency,
-                selectedCurrencies: self.currencyList
+                selectedCurrencies: self.selectedCurrencies
             }
         });
     }
@@ -97,12 +97,12 @@ chrome.runtime.onMessage.addListener(
         if (request.query == "CurrencyList") {
             sendResponse({
                 allCurrencies: currencyProvider.allCurrencies,
-                selectedCurrencies: currencyProvider.currencyList,
+                selectedCurrencies: currencyProvider.selectedCurrencies,
                 hostCurrency: currencyProvider.hostCurrency
             });
         }
         if (request.query == "DataUpdate") {
-            currencyProvider.currencyList = request.data.selectedCurrencies;
+            currencyProvider.selectedCurrencies = request.data.selectedCurrencies;
             currencyProvider.hostCurrency = request.data.hostCurrency;
             currencyProvider.makePersistent();
             currencyProvider.updateCurrencyInfo();
