@@ -51,6 +51,7 @@ var SettingsHandler = function() {
             var innerDiv = document.createElement('div');
             innerDiv.appendChild(check);
             innerDiv.appendChild(name);
+            innerDiv.className = "option-unit";
             div.appendChild(innerDiv);
         }
     }
