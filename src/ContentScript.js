@@ -23,11 +23,29 @@ var Translator = function() {
     };
 
     var tagAllCurrencies = function(text) {
-        document.body.innerHTML = document.body.innerHTML.replace(
-                self.figureExp,
-                '<span class="currency-tag">$&</span>'
-            );
+        getNodesUnder(document.body).forEach(markFiguresInNode);
     };
+
+    var markFiguresInNode = function(node) {
+        for (var i; (i = node.nodeValue.search(self.figureExp)) > -1; node = after){
+            var after = node.splitText( i + node.nodeValue.match(self.figureExp)[0].length);
+            var marked = node.splitText(i);
+
+            var span = document.createElement('span');
+            span.className = 'currency-tag';
+            span.appendChild(marked);
+
+            after.parentNode.insertBefore(span, after);
+        }
+    }
+
+    var getNodesUnder = function(root) {
+        var text = [], node;
+        var walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+        while(node = walk.nextNode())
+            text.push(node);
+        return text;
+    }
 
     var bindHover = function(currencyData) {
         $(".currency-tag").hover(
@@ -52,7 +70,7 @@ var Translator = function() {
             popupElement = $('#conversion-popup');
             $('#conversion-popup').show();
         } else {
-            popupElement = $("<div id='conversion-popup'></div>");
+            popupElement = $("<div id='conversion-popup' class='conversion-popup'></div>");
         }
 
         buildPopup(currencyData, currency, popupElement, currencyTag);

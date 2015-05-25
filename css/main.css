@@ -9,7 +9,8 @@
     padding: 2px 0px;
 }
 
-#conversion-popup {
+.conversion-popup {
+    z-index: 2147483647; /*max: integer*/
     border-radius: 10px 10px 10px 10px;
     box-shadow: 6px 6px 10px #888888;
     background: #FFFFFF;
@@ -21,6 +22,25 @@
     width: 150px;
 }
 
-#conversion-popup div {
+.conversion-popup div {
     text-align: right;
+}
+
+.conversion-popup div p {
+    margin: 0.5em;
+    line-height: 1.5em;
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: normal;
+    color: #000000;
+    background-color: #FFFFFF;
+}
+
+.conversion-popup div hr {
+    height: 1px;
+    color: #aaa;
+    background-color: #aaa;
+    border: 0;
+    margin: .2em 0;
 }
