@@ -81,8 +81,12 @@ var Translator = function() {
         var primaryConversionRate = currencyData.currencyMetadata[currency.id].conversion;
         var amount = parseFloat(currencyTag.innerText.replace(/[^.0-9]/g, ""));
 
-        var tr, td, p;
+        var tr, td, p, img;
         var div = document.createElement('div');
+        img = document.createElement('img');
+        img.src = chrome.extension.getURL("/images/AegonGold.png");
+        div.appendChild(img);
+
         p = document.createElement('p');
         p.innerHTML = currencyData.currencyMetadata[currencyData.hostCurrency].currencySymbol
             + ' ' + (amount * primaryConversionRate).toFixed(2);

@@ -27,6 +27,8 @@
     }
   ],
 
+  "web_accessible_resources": ["images/*.png"],
+
   "background":{
     "scripts":[
       "lib/jquery-v1.11.2.min.js",

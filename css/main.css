@@ -22,6 +22,14 @@
     width: 150px;
 }
 
+.conversion-popup img {
+    height: 30px;
+    width: 30px;
+    float: left;
+    opacity: 0.5;
+    margin-top: -10px;
+}
+
 .conversion-popup div {
     text-align: right;
 }
@@ -34,7 +42,7 @@
     font-style: normal;
     font-weight: normal;
     color: #000000;
-    background-color: #FFFFFF;
+    background-color: transparent;
 }
 
 .conversion-popup div hr {
