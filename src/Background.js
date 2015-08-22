@@ -6,10 +6,30 @@ var CurrencyProvider = function() {
     this.hostCurrency = "INR";
     this.selectedCurrencies = ["EUR", "GBP", "INR", "JPY", "USD"];
     this.currencyMetadata = {
-    USD: {
-        currencyName: "United States dollar",
-        currencySymbol: "$",
-        id: "USD"
+        USD: {
+            currencyName: "United States dollar",
+            currencySymbol: "$",
+            id: "USD"
+        },
+        GBP: {
+            currencyName: "Great Briton Pound",
+            currencySymbol: "£",
+            id: "GBP"
+        },
+        INR: {
+            currencyName: "Indian Rupee",
+            currencySymbol: "₹",
+            id: "INR"
+        },
+        JPY: {
+            currencyName: "Japanese Yen",
+            currencySymbol: "¥",
+            id: "JPY"
+        },
+        EUR: {
+            currencyName: "Euro",
+            currencySymbol: "€",
+            id: "EUR"
         }
     };
 
@@ -25,21 +45,16 @@ var CurrencyProvider = function() {
 
     this.refreshRates = function() {
         console.log("fetching rates from http://www.freecurrencyconverterapi.com...");
-        var requestUrl = "http://www.freecurrencyconverterapi.com/api/v3/convert?q=";
-        for(var index in self.selectedCurrencies) {
-            requestUrl = requestUrl + self.selectedCurrencies[index] + "_" + self.hostCurrency + ",";
-        }
-        requestUrl = requestUrl.replace(/,$/, "");
+        var requestUrl = "http://api.fixer.io/latest?base=" + self.hostCurrency;
 
         $.ajax({
             url: requestUrl,
-            success: function(jsonResult) {
-                var results = jsonResult.results;
+            success: function(jsonResponse) {
+            var results = jsonResponse.rates
                 for(var index in self.selectedCurrencies) {
-                    var key = self.selectedCurrencies[index] + "_" + self.hostCurrency;
-                    var srcCurrency = self.selectedCurrencies[index];
+                    var key = self.selectedCurrencies[index];
                     if(results[key]) {
-                        self.currencyMetadata[srcCurrency].conversion = results[key].val;
+                        self.currencyMetadata[key].conversion = results[key];
                     }
                 }
                 self.currencyMetadata[self.hostCurrency].conversion = 1;
@@ -48,24 +63,9 @@ var CurrencyProvider = function() {
     }
 
     this.updateCurrencyInfo = function() {
-        console.log("fetching currency metadata from http://www.freecurrencyconverterapi.com...");
-        var requestUrl = "http://www.freecurrencyconverterapi.com/api/v3/currencies";
+        console.log("fetching currency metadata from http://api.fixer.io/...");
+        self.refreshRates();
 
-        $.ajax({
-            url: requestUrl,
-            success: function(jsonResult) {
-                var results = jsonResult.results;
-                self.currencyMetadata = {};
-                for(var index in self.selectedCurrencies) {
-                    var key = self.selectedCurrencies[index];
-                    if(results[key]) {
-                        self.currencyMetadata[key] = results[key];
-                    }
-                }
-                self.currencyMetadata[self.hostCurrency] = results[self.hostCurrency];
-                self.refreshRates();
-            }
-        });
     }
 
     this.makePersistent = function() {

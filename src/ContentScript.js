@@ -89,7 +89,7 @@ var Translator = function() {
 
         p = document.createElement('p');
         p.innerHTML = currencyData.currencyMetadata[currencyData.hostCurrency].currencySymbol
-            + ' ' + (amount * primaryConversionRate).toFixed(2);
+            + ' ' + (amount / primaryConversionRate).toFixed(2);
         div.appendChild(p);
 
         div.appendChild(document.createElement('hr'));
@@ -98,7 +98,7 @@ var Translator = function() {
             if(currencyData.currencyMetadata[index].id != currencyData.hostCurrency) {
                 p = document.createElement('p');
                 p.innerHTML = currencyData.currencyMetadata[index].currencySymbol
-                    + ' ' + (amount * primaryConversionRate / currencyData.currencyMetadata[index].conversion).toFixed(2);
+                    + ' ' + (amount / primaryConversionRate * currencyData.currencyMetadata[index].conversion).toFixed(2);
                 div.appendChild(p);
             }
         }
