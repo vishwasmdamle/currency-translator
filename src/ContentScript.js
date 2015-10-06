@@ -5,7 +5,7 @@ $(document).ready(function() {
 var Translator = function() {
     var self = this;
 
-    var numberConverter = new NumberConverter();
+    var numberConverter;
 
     this.figureExp;
     this.currencySymbols = "";
@@ -14,6 +14,8 @@ var Translator = function() {
             {query: "CurrencyRate"},
             function(response) {
                 self.currencyData = response;
+                numberConverter = new NumberConverter(NumberConverter.INDIAN);
+
                 $.each(self.currencyData.currencyMetadata, function(key, value) {
                     if(value.id != self.currencyData.hostCurrency)
                         self.currencySymbols += '\\' + value.currencySymbol + '|';
