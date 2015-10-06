@@ -77,7 +77,7 @@ var Translator = function() {
             popupElement = $('#conversion-popup');
             $('#conversion-popup').show();
         } else {
-            popupElement = $("<div id='conversion-popup' class='conversion-popup'></div>");
+            popupElement = $("<div id='conversion-popup'></div>");
         }
 
         buildPopup(currencyData, currency, popupElement, currencyTag);
@@ -88,17 +88,19 @@ var Translator = function() {
         var primaryConversionRate = currencyData.currencyMetadata[currency.id].conversion;
         var amount = numberConverter.getNumericalAmount(currencyTag.innerText);
 
-        var tr, td, p, img, div;
-        var convertedAmount;
+        var tr, td, p, img, div, className;
+        var convertedAmount, formattedAmount;
         div = document.createElement('div');
         img = document.createElement('img');
         img.src = chrome.extension.getURL("/images/AegonGold.png");
         div.appendChild(img);
 
         convertedAmount = (amount / primaryConversionRate).toFixed(2);
+        formattedAmount = numberConverter.getFormattedAmount(convertedAmount);
         p = document.createElement('p');
         p.innerHTML = currencyData.currencyMetadata[currencyData.hostCurrency].currencySymbol
-            + ' ' + numberConverter.getFormattedAmount(convertedAmount);
+            + ' ' + formattedAmount;
+        className = 'conversion-popup ' + (formattedAmount.length > 10 ? 'large' : 'small');
         div.appendChild(p);
 
         div.appendChild(document.createElement('hr'));
@@ -115,6 +117,8 @@ var Translator = function() {
 
         element.empty();
         element.append(div);
+        element.removeClass();
+        element.addClass(className);
         $(document.body).append(element);
     };
 }

@@ -19,7 +19,14 @@
     border: 1px solid #888888;
     left: 1%;
     top: 1%;
+}
+
+.conversion-popup.small {
     width: 150px;
+}
+
+.conversion-popup.large {
+    width: 180px;
 }
 
 .conversion-popup img {
