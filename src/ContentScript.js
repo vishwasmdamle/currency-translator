@@ -4,6 +4,9 @@ $(document).ready(function() {
 });
 var Translator = function() {
     var self = this;
+
+    var numberConverter = new NumberConverter();
+
     this.figureExp;
     this.currencySymbols = "";
     this.init = function() {
@@ -81,24 +84,27 @@ var Translator = function() {
         var primaryConversionRate = currencyData.currencyMetadata[currency.id].conversion;
         var amount = parseFloat(currencyTag.innerText.replace(/[^.0-9]/g, ""));
 
-        var tr, td, p, img;
-        var div = document.createElement('div');
+        var tr, td, p, img, div;
+        var convertedAmount;
+        div = document.createElement('div');
         img = document.createElement('img');
         img.src = chrome.extension.getURL("/images/AegonGold.png");
         div.appendChild(img);
 
+        convertedAmount = (amount / primaryConversionRate).toFixed(2);
         p = document.createElement('p');
         p.innerHTML = currencyData.currencyMetadata[currencyData.hostCurrency].currencySymbol
-            + ' ' + (amount / primaryConversionRate).toFixed(2);
+            + ' ' + numberConverter.getFormattedAmount(convertedAmount);
         div.appendChild(p);
 
         div.appendChild(document.createElement('hr'));
 
         for(var index in currencyData.currencyMetadata) {
             if(currencyData.currencyMetadata[index].id != currencyData.hostCurrency) {
+                convertedAmount = (amount / primaryConversionRate * currencyData.currencyMetadata[index].conversion).toFixed(2);
                 p = document.createElement('p');
                 p.innerHTML = currencyData.currencyMetadata[index].currencySymbol
-                    + ' ' + (amount / primaryConversionRate * currencyData.currencyMetadata[index].conversion).toFixed(2);
+                    + ' ' + numberConverter.getFormattedAmount(convertedAmount);
                 div.appendChild(p);
             }
         }
