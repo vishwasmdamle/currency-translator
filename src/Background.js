@@ -43,8 +43,8 @@ var CurrencyProvider = function() {
         });
     }
 
-    this.refreshRates = function() {
-        console.log("fetching rates from http://www.freecurrencyconverterapi.com...");
+    this.updateCurrencyInfo = function() {
+        console.log("fetching rates from http://api.fixer.io/...");
         var requestUrl = "http://api.fixer.io/latest?base=" + self.hostCurrency;
 
         $.ajax({
@@ -60,12 +60,6 @@ var CurrencyProvider = function() {
                 self.currencyMetadata[self.hostCurrency].conversion = 1;
             }
         });
-    }
-
-    this.updateCurrencyInfo = function() {
-        console.log("fetching currency metadata from http://api.fixer.io/...");
-        self.refreshRates();
-
     }
 
     this.makePersistent = function() {
