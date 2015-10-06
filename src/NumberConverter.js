@@ -20,12 +20,17 @@ var NumberConverter = function(mode) {
         var formattedAmount = 0;
         for(var index in number) {
             if (amount / number[index].multiple > 1) {
-                formattedAmount = (amount / number[index].multiple).toFixed(2);
+                formattedAmount = formattedNumber((amount / number[index].multiple).toFixed(2));
                 formattedAmount = formattedAmount + number[index].suffix;
                 return formattedAmount;
             }
         }
         return amount;
+    }
+
+    var formattedNumber = function(number) {
+        var language = mode == NumberConverter.INDIAN ? "hin" : "eng";
+        return parseFloat(number).toLocaleString(language);
     }
 
     this.getNumericalAmount = function(amountText) {

@@ -100,7 +100,8 @@ var Translator = function() {
         p = document.createElement('p');
         p.innerHTML = currencyData.currencyMetadata[currencyData.hostCurrency].currencySymbol
             + ' ' + formattedAmount;
-        className = 'conversion-popup ' + (formattedAmount.length > 10 ? 'large' : 'small');
+        className = 'conversion-popup ' + getSizeClass(formattedAmount.length);
+
         div.appendChild(p);
 
         div.appendChild(document.createElement('hr'));
@@ -121,4 +122,15 @@ var Translator = function() {
         element.addClass(className);
         $(document.body).append(element);
     };
+
+    var getSizeClass = function(length) {
+        switch (true) {
+            case (length <= 10):
+                return "small";
+            case (length > 10 && length <= 15):
+                return "medium";
+            default:
+                return "large";
+        }
+    }
 }
