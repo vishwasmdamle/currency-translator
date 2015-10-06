@@ -6,6 +6,10 @@ body {
     padding: 5%;
 }
 
+#format-div {
+    padding: 5%;
+}
+
 #host-currency {
     margin-top: -1%;
     float: right;
@@ -16,6 +20,11 @@ body {
 }
 
 #currency-support {
+    margin-top: 5%;
+    border: 1px solid #AAAAAA;
+}
+
+#format-support {
     margin-top: 5%;
     border: 1px solid #AAAAAA;
 }

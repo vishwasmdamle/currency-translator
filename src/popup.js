@@ -3,14 +3,15 @@ var SettingsHandler = function() {
     self.currencies = [];
     self.selectedCurrencies = [];
     this.loadDetails = function() {
-        console.log("a");
         chrome.extension.sendMessage(
             {query: "CurrencyList"},
             function(response) {
                 self.currencies = response.allCurrencies;
                 self.selectedCurrencies = response.selectedCurrencies;
                 self.hostCurrency = response.hostCurrency;
+                self.numberFormat = response.numberFormat;
                 buildSelect();
+                buildRadio();
                 buildCheck();
             }
         )
@@ -56,6 +57,22 @@ var SettingsHandler = function() {
         }
     }
 
+    var buildRadio = function() {
+        var radioIndian = document.getElementById("format-indian");
+        var radioEnglish = document.getElementById("format-english");
+        radioIndian.checked = self.numberFormat == "INDIAN";
+        radioEnglish.checked = self.numberFormat == "ENGLISH";
+        radioIndian.onchange = radioToggled;
+        radioEnglish.onchange = radioToggled;
+    }
+
+    var radioToggled = function() {
+       if(this.checked) {
+           self.numberFormat = this.value;
+           sendUpdate()
+       }
+   }
+
     var checkboxToggled = function() {
         if(this.checked)
             self.selectedCurrencies.push(this.value);
@@ -74,7 +91,8 @@ var SettingsHandler = function() {
             query: "DataUpdate",
             data: {
                 selectedCurrencies: self.selectedCurrencies,
-                hostCurrency: self.hostCurrency
+                hostCurrency: self.hostCurrency,
+                numberFormat: self.numberFormat
             }
         });
     }

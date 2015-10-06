@@ -4,6 +4,7 @@ var CurrencyProvider = function() {
     var self = this;
     this.serviceId = 0;
     this.hostCurrency = "INR";
+    this.numberFormat = "ENGLISH";
     this.selectedCurrencies = ["EUR", "GBP", "INR", "JPY", "USD"];
     this.currencyMetadata = {
         USD: {
@@ -39,6 +40,7 @@ var CurrencyProvider = function() {
                 return;
             self.hostCurrency = dataObject.data.hostCurrency;
             self.selectedCurrencies = dataObject.data.selectedCurrencies;
+            self.numberFormat = dataObject.data.numberFormat;
             self.updateCurrencyInfo();
         });
     }
@@ -66,7 +68,8 @@ var CurrencyProvider = function() {
         chrome.storage.sync.set({
             data: {
                 hostCurrency: self.hostCurrency,
-                selectedCurrencies: self.selectedCurrencies
+                selectedCurrencies: self.selectedCurrencies,
+                numberFormat: self.numberFormat
             }
         });
     }
@@ -87,19 +90,22 @@ chrome.runtime.onMessage.addListener(
         if (request.query == "CurrencyRate") {
             sendResponse({
                 currencyMetadata: currencyProvider.currencyMetadata,
-                hostCurrency: currencyProvider.hostCurrency
+                hostCurrency: currencyProvider.hostCurrency,
+                numberFormat: currencyProvider.numberFormat
             });
         }
         if (request.query == "CurrencyList") {
             sendResponse({
                 allCurrencies: currencyProvider.allCurrencies,
                 selectedCurrencies: currencyProvider.selectedCurrencies,
-                hostCurrency: currencyProvider.hostCurrency
+                hostCurrency: currencyProvider.hostCurrency,
+                numberFormat: currencyProvider.numberFormat
             });
         }
         if (request.query == "DataUpdate") {
             currencyProvider.selectedCurrencies = request.data.selectedCurrencies;
             currencyProvider.hostCurrency = request.data.hostCurrency;
+            currencyProvider.numberFormat = request.data.numberFormat;
             currencyProvider.makePersistent();
             currencyProvider.updateCurrencyInfo();
         }

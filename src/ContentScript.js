@@ -14,7 +14,8 @@ var Translator = function() {
             {query: "CurrencyRate"},
             function(response) {
                 self.currencyData = response;
-                numberConverter = new NumberConverter(NumberConverter.INDIAN);
+                var format = response.numberFormat == "INDIAN" ? NumberConverter.INDIAN : NumberConverter.ENGLISH;
+                numberConverter = new NumberConverter(format);
 
                 $.each(self.currencyData.currencyMetadata, function(key, value) {
                     if(value.id != self.currencyData.hostCurrency)
