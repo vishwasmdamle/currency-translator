@@ -22,7 +22,8 @@ var Translator = function() {
                         self.currencySymbols += '\\' + value.currencySymbol + '|';
                 });
                 self.currencySymbols = self.currencySymbols.replace(/\|$/, '');
-                self.figureExp = new RegExp('((' + self.currencySymbols + ')[0-9\\., ]*[0-9])(?!([^<]+)?>)', 'gi');
+                var unitsList = 'trillion|billion|million|thousand|tr|tn|bn|m|k';
+                self.figureExp = new RegExp('((' + self.currencySymbols + ')[0-9\\., ]*[0-9]([\\ |\u00a0]*('+ unitsList + '))*)(?!([^<]+)?>)', 'gi');
                 tagAllCurrencies();
                 bindHover(self.currencyData);
         });
@@ -85,7 +86,7 @@ var Translator = function() {
 
     var buildPopup = function(currencyData, currency, element, currencyTag) {
         var primaryConversionRate = currencyData.currencyMetadata[currency.id].conversion;
-        var amount = parseFloat(currencyTag.innerText.replace(/[^.0-9]/g, ""));
+        var amount = numberConverter.getNumericalAmount(currencyTag.innerText);
 
         var tr, td, p, img, div;
         var convertedAmount;
