@@ -4,6 +4,9 @@ body {
 
 #toggle-div {
     padding: 5%;
+    line-height: 22px;
+    font-weight: bold;
+    vertical-align: middle;
 }
 
 #toggle {
@@ -41,4 +44,64 @@ body {
     width: 45%;
     display: inline-block;
     padding: 2%;
+}
+
+input.switch + label {
+  padding: 2px;
+  width: 38px;
+  height: 19px;
+  background-color: #dddddd;
+  border-radius: 19px;
+}
+
+input.switch + label:before, input.switch + label:after {
+  display: inline;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  bottom: 1px;
+  content: "";
+}
+
+input.switch + label:before {
+  right: 1px;
+  background-color: #f1f1f1;
+  border-radius: 20px;
+  transition: background 0.4s;
+}
+
+input.switch + label:after {
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border-radius: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: margin 0.4s;
+}
+
+#toggle-group {
+    display: inline;
+    float: right;
+}
+
+input.switch:checked + label:before {
+  background-color: #3b99fc;
+}
+
+input.switch:checked + label:after {
+  margin-left: 20px;
+}
+
+.toggle {
+  position: absolute;
+  margin-left: -9999px;
+  visibility: hidden;
+}
+
+.toggle + label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
 }
