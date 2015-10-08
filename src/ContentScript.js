@@ -14,19 +14,23 @@ var Translator = function() {
             {query: "CurrencyRate"},
             function(response) {
                 self.currencyData = response;
-                var format = response.numberFormat == "INDIAN" ? NumberConverter.INDIAN : NumberConverter.ENGLISH;
-                numberConverter = new NumberConverter(format);
-
-                $.each(self.currencyData.currencyMetadata, function(key, value) {
-                    if(value.id != self.currencyData.hostCurrency)
-                        self.currencySymbols += '\\' + value.currencySymbol + '|';
-                });
-                self.currencySymbols = self.currencySymbols.replace(/\|$/, '');
-                var unitsList = 'trillion|billion|million|thousand|tr|tn|bn|m|k';
-                self.figureExp = new RegExp('((' + self.currencySymbols + ')[0-9\\., ]*[0-9]([\\ |\u00a0]*('+ unitsList + '))*)(?!([^<]+)?>)', 'gi');
+                setupData(response);
                 tagAllCurrencies();
                 bindHover(self.currencyData);
         });
+    };
+
+    var setupData = function(response) {
+        var format = response.numberFormat == "INDIAN" ? NumberConverter.INDIAN : NumberConverter.ENGLISH;
+        numberConverter = new NumberConverter(format);
+
+        $.each(self.currencyData.currencyMetadata, function(key, value) {
+            if(value.id != self.currencyData.hostCurrency)
+                self.currencySymbols += '\\' + value.currencySymbol + '|';
+        });
+        self.currencySymbols = self.currencySymbols.replace(/\|$/, '');
+        var unitsList = 'trillion|billion|million|thousand|tr|tn|bn|mn|m|k';
+        self.figureExp = new RegExp('((' + self.currencySymbols + ')[0-9\\., ]*[0-9]([\\ |\u00a0]*('+ unitsList + '))*)(?!([^<]+)?>)', 'gi');
     };
 
     var tagAllCurrencies = function(text) {
