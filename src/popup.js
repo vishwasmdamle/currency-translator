@@ -15,8 +15,17 @@ var SettingsHandler = function() {
                 buildSelect();
                 buildRadio();
                 buildCheck();
+                setEnabled();
             }
         )
+    }
+
+    var setEnabled = function() {
+        if(self.isToggledOff) {
+            document.getElementById('pref-form').style.display = 'none';
+        } else {
+            document.getElementById('pref-form').style.display = 'block';
+        }
     }
 
     var buildToggle = function() {
@@ -24,6 +33,7 @@ var SettingsHandler = function() {
         toggle.checked = !self.isToggledOff;
         toggle.onchange = function() {
             self.isToggledOff = !this.checked;
+            setEnabled();
             sendUpdate();
         };
     }

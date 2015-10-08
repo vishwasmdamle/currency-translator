@@ -6,11 +6,16 @@ body {
     padding: 5%;
     line-height: 22px;
     font-weight: bold;
+    font-size: 13px;
     vertical-align: middle;
 }
 
 #toggle {
     float: right;
+}
+
+#pref-form {
+    display: none;
 }
 
 #select-div {
@@ -67,7 +72,7 @@ input.switch + label:before {
   right: 1px;
   background-color: #f1f1f1;
   border-radius: 20px;
-  transition: background 0.4s;
+  transition: background 0.2s;
 }
 
 input.switch + label:after {
@@ -76,7 +81,7 @@ input.switch + label:after {
   background-color: #fff;
   border-radius: 100%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  transition: margin 0.4s;
+  transition: margin 0.2s;
 }
 
 #toggle-group {
