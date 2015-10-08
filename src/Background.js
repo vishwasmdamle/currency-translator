@@ -5,6 +5,7 @@ var CurrencyProvider = function() {
     this.serviceId = 0;
     this.hostCurrency = "INR";
     this.numberFormat = "ENGLISH";
+    this.isToggledOff = true;
     this.selectedCurrencies = ["EUR", "GBP", "INR", "JPY", "USD"];
     this.currencyMetadata = {
         USD: {
@@ -91,21 +92,24 @@ chrome.runtime.onMessage.addListener(
             sendResponse({
                 currencyMetadata: currencyProvider.currencyMetadata,
                 hostCurrency: currencyProvider.hostCurrency,
-                numberFormat: currencyProvider.numberFormat
+                numberFormat: currencyProvider.numberFormat,
+                isToggledOff: currencyProvider.isToggledOff
             });
         }
-        if (request.query == "CurrencyList") {
+        if (request.query == "Preferences") {
             sendResponse({
                 allCurrencies: currencyProvider.allCurrencies,
                 selectedCurrencies: currencyProvider.selectedCurrencies,
                 hostCurrency: currencyProvider.hostCurrency,
-                numberFormat: currencyProvider.numberFormat
+                numberFormat: currencyProvider.numberFormat,
+                isToggledOff: currencyProvider.isToggledOff
             });
         }
         if (request.query == "DataUpdate") {
             currencyProvider.selectedCurrencies = request.data.selectedCurrencies;
             currencyProvider.hostCurrency = request.data.hostCurrency;
             currencyProvider.numberFormat = request.data.numberFormat;
+            currencyProvider.isToggledOff = request.data.isToggledOff;
             currencyProvider.makePersistent();
             currencyProvider.updateCurrencyInfo();
         }

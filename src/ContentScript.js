@@ -14,9 +14,11 @@ var Translator = function() {
             {query: "CurrencyRate"},
             function(response) {
                 self.currencyData = response;
-                setupData(response);
-                tagAllCurrencies();
-                bindHover(self.currencyData);
+                if (response.isToggledOff == false) {
+                    setupData(response);
+                    tagAllCurrencies();
+                    bindHover(self.currencyData);
+                }
         });
     };
 
