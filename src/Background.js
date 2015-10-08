@@ -5,7 +5,7 @@ var CurrencyProvider = function() {
     this.serviceId = 0;
     this.hostCurrency = "INR";
     this.numberFormat = "ENGLISH";
-    this.isToggledOff = true;
+    this.isToggledOff = false;
     this.selectedCurrencies = ["EUR", "GBP", "INR", "JPY", "USD"];
     this.currencyMetadata = {
         USD: {
@@ -42,6 +42,7 @@ var CurrencyProvider = function() {
             self.hostCurrency = dataObject.data.hostCurrency;
             self.selectedCurrencies = dataObject.data.selectedCurrencies;
             self.numberFormat = dataObject.data.numberFormat;
+            self.isToggledOff = dataObject.data.isToggledOff;
             self.updateCurrencyInfo();
         });
     }
@@ -70,7 +71,8 @@ var CurrencyProvider = function() {
             data: {
                 hostCurrency: self.hostCurrency,
                 selectedCurrencies: self.selectedCurrencies,
-                numberFormat: self.numberFormat
+                numberFormat: self.numberFormat,
+                isToggledOff: self.isToggledOff
             }
         });
     }

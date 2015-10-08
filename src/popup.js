@@ -10,11 +10,22 @@ var SettingsHandler = function() {
                 self.selectedCurrencies = response.selectedCurrencies;
                 self.hostCurrency = response.hostCurrency;
                 self.numberFormat = response.numberFormat;
+                self.isToggledOff = response.isToggledOff;
+                buildToggle();
                 buildSelect();
                 buildRadio();
                 buildCheck();
             }
         )
+    }
+
+    var buildToggle = function() {
+        var toggle = document.getElementById("toggle");
+        toggle.checked = !self.isToggledOff;
+        toggle.onchange = function() {
+            self.isToggledOff = !this.checked;
+            sendUpdate();
+        };
     }
 
     var buildSelect = function() {
@@ -92,7 +103,8 @@ var SettingsHandler = function() {
             data: {
                 selectedCurrencies: self.selectedCurrencies,
                 hostCurrency: self.hostCurrency,
-                numberFormat: self.numberFormat
+                numberFormat: self.numberFormat,
+                isToggledOff: self.isToggledOff
             }
         });
     }

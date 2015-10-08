@@ -2,6 +2,14 @@ body {
     width: 200px;
 }
 
+#toggle-div {
+    padding: 5%;
+}
+
+#toggle {
+    float: right;
+}
+
 #select-div {
     padding: 5%;
 }
