@@ -37,12 +37,16 @@ body {
 
 #currency-support {
     margin-top: 5%;
-    border: 1px solid #AAAAAA;
+    padding: 2px 4px 2px 4px;
+    border: 1px solid #DCDCDC;
+    border-radius: 4px;
 }
 
 #format-support {
     margin-top: 5%;
-    border: 1px solid #AAAAAA;
+    padding: 2px 4px 2px 4px;
+    border: 1px solid #DCDCDC;
+    border-radius: 4px;
 }
 
 .option-unit {
