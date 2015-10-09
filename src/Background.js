@@ -7,33 +7,7 @@ var CurrencyProvider = function() {
     this.numberFormat = "ENGLISH";
     this.isToggledOff = false;
     this.selectedCurrencies = ["EUR", "GBP", "INR", "JPY", "USD"];
-    this.currencyMetadata = {
-        USD: {
-            currencyName: "United States dollar",
-            currencySymbol: "$",
-            id: "USD"
-        },
-        GBP: {
-            currencyName: "Great Briton Pound",
-            currencySymbol: "£",
-            id: "GBP"
-        },
-        INR: {
-            currencyName: "Indian Rupee",
-            currencySymbol: "₹",
-            id: "INR"
-        },
-        JPY: {
-            currencyName: "Japanese Yen",
-            currencySymbol: "¥",
-            id: "JPY"
-        },
-        EUR: {
-            currencyName: "Euro",
-            currencySymbol: "€",
-            id: "EUR"
-        }
-    };
+    this.currencyMetadata;
 
     this.init = function() {
         chrome.storage.sync.get(function(dataObject) {
@@ -54,7 +28,8 @@ var CurrencyProvider = function() {
         $.ajax({
             url: requestUrl,
             success: function(jsonResponse) {
-            var results = jsonResponse.rates;
+                var results = jsonResponse.rates;
+                self.currencyMetadata = getEmptyCurrencyMetadata();
                 for(var index in self.selectedCurrencies) {
                     var key = self.selectedCurrencies[index];
                     if(results[key]) {
@@ -93,6 +68,7 @@ var CurrencyProvider = function() {
     this.generateDataForCS = function() {
         return {
             currencyMetadata: self.currencyMetadata,
+            selectedCurrencies: self.selectedCurrencies,
             hostCurrency: self.hostCurrency,
             numberFormat: self.numberFormat,
             isToggledOff: self.isToggledOff
@@ -103,6 +79,37 @@ var CurrencyProvider = function() {
         self.updateCurrencyInfo();
         self.serviceId = setInterval(self.updateCurrencyInfo, 900000);
     }
+
+    var getEmptyCurrencyMetadata = function() {
+        return {
+            USD: {
+                currencyName: "United States dollar",
+                currencySymbol: "$",
+                id: "USD"
+            },
+            GBP: {
+                currencyName: "Great Briton Pound",
+                currencySymbol: "£",
+                id: "GBP"
+            },
+            INR: {
+                currencyName: "Indian Rupee",
+                currencySymbol: "₹",
+                id: "INR"
+            },
+            JPY: {
+                currencyName: "Japanese Yen",
+                currencySymbol: "¥",
+                id: "JPY"
+            },
+            EUR: {
+                currencyName: "Euro",
+                currencySymbol: "€",
+                id: "EUR"
+            }
+        }
+    };
+
     this.init();
 }
 

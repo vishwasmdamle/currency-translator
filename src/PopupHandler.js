@@ -39,7 +39,7 @@ var PopupHandler = function(numberConverter, currencyData) {
 
     var appendOtherCurrencies = function(div) {
         $.each(currencyData.currencyMetadata, function(key, value) {
-            if(value.id != currencyData.hostCurrency) {
+            if($.inArray(value.id, currencyData.selectedCurrencies) != -1 && value.id != currencyData.hostCurrency) {
                 convertedAmount = (self.amount / self.primaryConversionRate * value.conversion).toFixed(2);
                 appendParagraphElement(div, value.currencySymbol, convertedAmount)
             }
