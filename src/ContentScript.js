@@ -36,10 +36,12 @@ var Translator = function() {
     };
 
     this.onPreferenceUpdate = function(data) {
-        translator.currencyData = data;
-        setupData();
+        self.currencyData = data;
         removeAllTags();
-        tagAllCurrencies();
+        if (data.isToggledOff == false) {
+            setupData();
+            tagAllCurrencies();
+        }
     }
     var tagAllCurrencies = function(text) {
         getNodesUnder(document.body).forEach(markFiguresInNode);

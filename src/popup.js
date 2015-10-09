@@ -11,15 +11,18 @@ var SettingsHandler = function() {
                 self.hostCurrency = response.hostCurrency;
                 self.numberFormat = response.numberFormat;
                 self.isToggledOff = response.isToggledOff;
-                buildToggle();
-                buildSelect();
-                buildRadio();
-                buildCheck();
-                setEnabled();
+                buildView()
             }
         )
     }
 
+    var buildView = function() {
+        buildToggle();
+        buildSelect();
+        buildRadio();
+        buildCheck();
+        setEnabled();
+    }
     var setEnabled = function() {
         if(self.isToggledOff) {
             document.getElementById('pref-form').style.display = 'none';
@@ -34,7 +37,7 @@ var SettingsHandler = function() {
         toggle.onchange = function() {
             self.isToggledOff = !this.checked;
             setEnabled();
-            sendUpdate();
+            onPreferenceUpdated();
         };
     }
 
@@ -59,22 +62,24 @@ var SettingsHandler = function() {
         var div = document.getElementById("currency-support");
         div.innerHTML = "";
         for(var index in self.currencies) {
-            check = document.createElement('input');
-            var name = document.createElement('span');
-            check.type = "checkbox";
-            check.name = "currency-group";
-            check.id = check.value = name.innerText = self.currencies[index]
-
-            if(self.selectedCurrencies.indexOf(self.currencies[index]) > -1) {
-                check.checked = true;
+            if (self.currencies[index] != self.hostCurrency) {
+                check = document.createElement('input');
+                var name = document.createElement('span');
+                check.type = "checkbox";
+                check.name = "currency-group";
+                check.id = check.value = name.innerText = self.currencies[index]
+    
+                if(self.selectedCurrencies.indexOf(self.currencies[index]) > -1) {
+                    check.checked = true;
+                }
+                check.onclick = checkboxToggled;
+    
+                var innerDiv = document.createElement('div');
+                innerDiv.appendChild(check);
+                innerDiv.appendChild(name);
+                innerDiv.className = "option-unit";
+                div.appendChild(innerDiv);
             }
-            check.onclick = checkboxToggled;
-
-            var innerDiv = document.createElement('div');
-            innerDiv.appendChild(check);
-            innerDiv.appendChild(name);
-            innerDiv.className = "option-unit";
-            div.appendChild(innerDiv);
         }
     }
 
@@ -90,7 +95,7 @@ var SettingsHandler = function() {
     var radioToggled = function() {
        if(this.checked) {
            self.numberFormat = this.value;
-           sendUpdate()
+           onPreferenceUpdated()
        }
    }
 
@@ -99,12 +104,17 @@ var SettingsHandler = function() {
             self.selectedCurrencies.push(this.value);
         else
             self.selectedCurrencies.splice(self.selectedCurrencies.indexOf(this.value), 1)
-        sendUpdate();
+        onPreferenceUpdated();
     }
 
     var selectChanged = function() {
        self.hostCurrency = this.value;
-       sendUpdate();
+       onPreferenceUpdated();
+    }
+
+    var onPreferenceUpdated = function() {
+        buildView();
+        sendUpdate();
     }
 
     var sendUpdate = function() {
