@@ -27,7 +27,7 @@ var Translator = function() {
         numberConverter = new NumberConverter(self.currencyData.numberFormat);
 
         $.each(self.currencyData.currencyMetadata, function(key, value) {
-            if(value.id != self.currencyData.hostCurrency)
+            if($.inArray(value.id, self.currencyData.selectedCurrencies) != -1 && value.id != self.currencyData.hostCurrency)
                 self.currencySymbols += '\\' + value.currencySymbol + '|';
         });
         self.currencySymbols = self.currencySymbols.replace(/\|$/, '');
