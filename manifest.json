@@ -19,6 +19,7 @@
       "js": [
         "lib/jquery-v1.11.2.min.js",
         "src/NumberConverter.js",
+        "src/PopupHandler.js",
         "src/ContentScript.js"
       ],
       "matches": [
