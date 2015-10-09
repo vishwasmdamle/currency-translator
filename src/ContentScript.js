@@ -9,7 +9,7 @@ var Translator = function() {
     var numberConverter;
 
     this.figureExp;
-    this.currencySymbols = "";
+    this.currencySymbols;
     this.init = function() {
         chrome.runtime.sendMessage(
             {query: "CurrencyRateFromCS"},
@@ -18,7 +18,6 @@ var Translator = function() {
                 if (response.isToggledOff == false) {
                     setupData();
                     tagAllCurrencies();
-                    bindHover();
                 }
         });
     };
@@ -26,6 +25,7 @@ var Translator = function() {
     var setupData = function() {
         numberConverter = new NumberConverter(self.currencyData.numberFormat);
 
+        self.currencySymbols = "";
         $.each(self.currencyData.currencyMetadata, function(key, value) {
             if($.inArray(value.id, self.currencyData.selectedCurrencies) != -1 && value.id != self.currencyData.hostCurrency)
                 self.currencySymbols += '\\' + value.currencySymbol + '|';
@@ -38,10 +38,17 @@ var Translator = function() {
     this.onPreferenceUpdate = function(data) {
         translator.currencyData = data;
         setupData();
+        removeAllTags();
+        tagAllCurrencies();
     }
     var tagAllCurrencies = function(text) {
         getNodesUnder(document.body).forEach(markFiguresInNode);
+        bindHover();
     };
+
+    var removeAllTags = function() {
+        $('.currency-tag').contents().unwrap();
+    }
 
     var markFiguresInNode = function(node) {
         for (var i; (i = node.nodeValue.search(self.figureExp)) > -1; node = after){

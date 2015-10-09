@@ -17,30 +17,31 @@ var CurrencyProvider = function() {
             self.selectedCurrencies = dataObject.data.selectedCurrencies;
             self.numberFormat = dataObject.data.numberFormat;
             self.isToggledOff = dataObject.data.isToggledOff;
-            self.updateCurrencyInfo();
+            self.updateCurrencyInfo(updateDataFromJson);
         });
     }
 
-    this.updateCurrencyInfo = function() {
+    this.updateCurrencyInfo = function(onSuccess) {
         console.log("fetching rates from http://api.fixer.io/...");
         var requestUrl = "http://api.fixer.io/latest?base=" + self.hostCurrency;
 
         $.ajax({
             url: requestUrl,
-            success: function(jsonResponse) {
-                var results = jsonResponse.rates;
-                self.currencyMetadata = getEmptyCurrencyMetadata();
-                for(var index in self.selectedCurrencies) {
-                    var key = self.selectedCurrencies[index];
-                    if(results[key]) {
-                        self.currencyMetadata[key].conversion = results[key];
-                    }
-                }
-                self.currencyMetadata[self.hostCurrency].conversion = 1;
-            }
+            success: onSuccess
         });
     }
 
+    var updateDataFromJson = function(jsonResponse) {
+        var results = jsonResponse.rates;
+        self.currencyMetadata = getEmptyCurrencyMetadata();
+        for(var index in self.selectedCurrencies) {
+            var key = self.selectedCurrencies[index];
+            if(results[key]) {
+                self.currencyMetadata[key].conversion = results[key];
+            }
+        }
+        self.currencyMetadata[self.hostCurrency].conversion = 1;
+    }
     this.makePersistent = function() {
         chrome.storage.sync.set({
             data: {
@@ -53,16 +54,18 @@ var CurrencyProvider = function() {
     }
 
     this.sendUpdatedPreferences = function() {
-        this.updateCurrencyInfo();
-        data = self.generateDataForCS();
-        chrome.tabs.query({},
-            function(tabs) {
-                $.each(tabs,
-                    function(key, currentTab) {
-                        chrome.tabs.sendMessage(currentTab.id, {query: 'PreferenceUpdateFromBackground', data: data})
-                });
-            }
-        );
+        this.updateCurrencyInfo(function(jsonData) {
+            updateDataFromJson(jsonData);
+            data = self.generateDataForCS();
+            chrome.tabs.query({},
+                function(tabs) {
+                    $.each(tabs,
+                        function(key, currentTab) {
+                            chrome.tabs.sendMessage(currentTab.id, {query: 'PreferenceUpdateFromBackground', data: data})
+                    });
+                }
+            );
+        });
     }
 
     this.generateDataForCS = function() {
