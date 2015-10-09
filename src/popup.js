@@ -4,7 +4,7 @@ var SettingsHandler = function() {
     self.selectedCurrencies = [];
     this.loadDetails = function() {
         chrome.extension.sendMessage(
-            {query: "Preferences"},
+            {query: "PreferencesFromPopup"},
             function(response) {
                 self.currencies = response.allCurrencies;
                 self.selectedCurrencies = response.selectedCurrencies;
@@ -109,7 +109,7 @@ var SettingsHandler = function() {
 
     var sendUpdate = function() {
         chrome.extension.sendMessage({
-            query: "DataUpdate",
+            query: "PreferenceUpdateFromPopup",
             data: {
                 selectedCurrencies: self.selectedCurrencies,
                 hostCurrency: self.hostCurrency,

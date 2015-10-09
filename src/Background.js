@@ -54,7 +54,7 @@ var CurrencyProvider = function() {
         $.ajax({
             url: requestUrl,
             success: function(jsonResponse) {
-            var results = jsonResponse.rates
+            var results = jsonResponse.rates;
                 for(var index in self.selectedCurrencies) {
                     var key = self.selectedCurrencies[index];
                     if(results[key]) {
@@ -77,6 +77,28 @@ var CurrencyProvider = function() {
         });
     }
 
+    this.sendUpdatedPreferences = function() {
+        this.updateCurrencyInfo();
+        data = self.generateDataForCS();
+        chrome.tabs.query({},
+            function(tabs) {
+                $.each(tabs,
+                    function(key, currentTab) {
+                        chrome.tabs.sendMessage(currentTab.id, {query: 'PreferenceUpdateFromBackground', data: data})
+                });
+            }
+        );
+    }
+
+    this.generateDataForCS = function() {
+        return {
+            currencyMetadata: self.currencyMetadata,
+            hostCurrency: self.hostCurrency,
+            numberFormat: self.numberFormat,
+            isToggledOff: self.isToggledOff
+        };
+    }
+
     this.startRefreshService = function() {
         self.updateCurrencyInfo();
         self.serviceId = setInterval(self.updateCurrencyInfo, 900000);
@@ -90,15 +112,10 @@ currencyProvider.startRefreshService();
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        if (request.query == "CurrencyRate") {
-            sendResponse({
-                currencyMetadata: currencyProvider.currencyMetadata,
-                hostCurrency: currencyProvider.hostCurrency,
-                numberFormat: currencyProvider.numberFormat,
-                isToggledOff: currencyProvider.isToggledOff
-            });
+        if (request.query == "CurrencyRateFromCS") {
+            sendResponse(currencyProvider.generateDataForCS());
         }
-        if (request.query == "Preferences") {
+        if (request.query == "PreferencesFromPopup") {
             sendResponse({
                 allCurrencies: currencyProvider.allCurrencies,
                 selectedCurrencies: currencyProvider.selectedCurrencies,
@@ -107,12 +124,13 @@ chrome.runtime.onMessage.addListener(
                 isToggledOff: currencyProvider.isToggledOff
             });
         }
-        if (request.query == "DataUpdate") {
+        if (request.query == "PreferenceUpdateFromPopup") {
             currencyProvider.selectedCurrencies = request.data.selectedCurrencies;
             currencyProvider.hostCurrency = request.data.hostCurrency;
             currencyProvider.numberFormat = request.data.numberFormat;
             currencyProvider.isToggledOff = request.data.isToggledOff;
             currencyProvider.makePersistent();
             currencyProvider.updateCurrencyInfo();
+            currencyProvider.sendUpdatedPreferences();
         }
 });

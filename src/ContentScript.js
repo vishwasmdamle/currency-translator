@@ -1,6 +1,7 @@
-
+var translator;
 $(document).ready(function() {
-    new Translator().init();
+    translator = new Translator();
+    translator.init();
 });
 var Translator = function() {
     var self = this;
@@ -11,20 +12,19 @@ var Translator = function() {
     this.currencySymbols = "";
     this.init = function() {
         chrome.runtime.sendMessage(
-            {query: "CurrencyRate"},
+            {query: "CurrencyRateFromCS"},
             function(response) {
                 self.currencyData = response;
                 if (response.isToggledOff == false) {
-                    setupData(response);
+                    setupData();
                     tagAllCurrencies();
-                    bindHover(self.currencyData);
+                    bindHover();
                 }
         });
     };
 
-    var setupData = function(response) {
-        var format = response.numberFormat == "INDIAN" ? NumberConverter.INDIAN : NumberConverter.ENGLISH;
-        numberConverter = new NumberConverter(format);
+    var setupData = function() {
+        numberConverter = new NumberConverter(self.currencyData.numberFormat);
 
         $.each(self.currencyData.currencyMetadata, function(key, value) {
             if(value.id != self.currencyData.hostCurrency)
@@ -35,6 +35,10 @@ var Translator = function() {
         self.figureExp = new RegExp('((' + self.currencySymbols + ')[0-9\\., ]*[0-9]([\\ |\u00a0]*('+ unitsList + '))*)(?!([^<]+)?>)', 'gi');
     };
 
+    this.onPreferenceUpdate = function(data) {
+        translator.currencyData = data;
+        setupData();
+    }
     var tagAllCurrencies = function(text) {
         getNodesUnder(document.body).forEach(markFiguresInNode);
     };
@@ -73,3 +77,12 @@ var Translator = function() {
         );
     }
 }
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        if (request.query == "PreferenceUpdateFromBackground") {
+            if (translator) {
+                translator.onPreferenceUpdate(request.data);
+            }
+        }
+    }
+);

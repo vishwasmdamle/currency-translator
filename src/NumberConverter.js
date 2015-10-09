@@ -1,4 +1,5 @@
-var NumberConverter = function(mode) {
+var NumberConverter = function(modeName) {
+    var mode = modeName == "INDIAN" ? NumberConverter.INDIAN : NumberConverter.ENGLISH;
 
     var unitsList = 'trillion|billion|million|thousand|tr|tn|bn|m|k';
     var unitsRegex = new RegExp(unitsList, 'i');
